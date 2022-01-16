@@ -5,10 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 const Schema = mongoose.Schema;
 
 var User = new Schema({
-    id: {
-        type: String,
-        default: uuidv4()
-    },
+    id: uuidv4(),
     firstname: {
         type: String,
         default: ''
@@ -19,7 +16,11 @@ var User = new Schema({
     },
     email: {
         type: String,
-        default: ''
+        required
+    },
+    password: {
+        type: String,
+        required
     },
     admin: {
         type: Boolean,
