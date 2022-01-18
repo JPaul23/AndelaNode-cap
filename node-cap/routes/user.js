@@ -1,19 +1,19 @@
 import express from "express";
-//import bodyParser from "body-parser";
+import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt';
+//import cookieParser from "cookie-parser";
 
 import config from "../config.js";
-
-/* const token = sign({ "d": "dd" }, "secret", { expiresIn: 300 })
-console.log(token);
-const verifycode = verify(token, "secret");
-console.log(verifycode); */
+import { verifyCookie } from "../Middleware/authentication.js";
+import { getLogout } from "../controllers/userController.js";
+import userModel from "../models/user.js"; //user model
 
 const userRouter = express.Router();
 userRouter.use(express.json());
+const Users = userModel;
 
-const users = [];
+//const users = [];
 
 userRouter.route('/')
     .all((req, res, next) => {
@@ -22,10 +22,15 @@ userRouter.route('/')
         next()
     })
     .get((req, res, next) => {
-        res.send(users);
+        Users.find({}).then((users) => {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(users);
+        }, (err) => next(err))
+            .catch((err) => next(err));
     });
 
-
+/* ========================SIGNUP======================= */
 userRouter
     .post('/signup', async (req, res, next) => {
 
@@ -40,10 +45,14 @@ userRouter
             }; //store the hashed password
 
 
-            users.push(user);
+            Users.create(user).then((user) => {
+                console.log(` ${user.firstname}'s account has been created successfully!`);
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(user)
+            }, (err) => next(err))
+                .catch((err) => next(err));
 
-            res.statusCode = 201;
-            res.send(`${req.body.firstname}'s account has been created successfully!`);
 
         } catch (error) {
             res.statusCode = 500;
@@ -53,6 +62,7 @@ userRouter
 
     });
 
+/* ===================LOGIN============================ */
 userRouter.post('/login', async (req, res, next) => {
     //authenticate user
     const user = users.find(user => user.email == req.body.email);
@@ -66,7 +76,9 @@ userRouter.post('/login', async (req, res, next) => {
             //sign the email
             const accessToken = jwt.sign(userMail, config.ACCESS_TOKEN_SECRET);
 
-            res.send(`You have successfully logged in! \n with Token: ${accessToken}`);
+            res.cookie("session_id", accessToken, { httpOnly: true, maxAge: 600 })
+            res.setHeader('Content-Type', 'application/json');
+            res.status(200).json({ success: true, token: accessToken, status: 'You are successfully logged in!' });
         }
         else {
             res.send('Not allowed');
@@ -77,9 +89,13 @@ userRouter.post('/login', async (req, res, next) => {
     }
 });
 
-userRouter.post('/logout', async (req, res, next) => {
-
-})
+/* =====================LOGOUT======================= */
+userRouter.get('/logout', verifyCookie, (req, res,) => {
+    return res
+        //.clearCookie("session_id")
+        .status(200)
+        .json({ message: "Successfully logged out 😏 🍀" });
+}); //getLogout controller
 
 
 export default userRouter;

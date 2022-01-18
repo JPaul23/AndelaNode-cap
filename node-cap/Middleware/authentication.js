@@ -14,3 +14,13 @@ export const verifyToken = (req, res, next) => {
     })
 
 }
+
+export const verifyCookie = (req, res, next) => {
+    const cookie = req.cookies.session_id;
+    if (!cookie) {
+        console.log(cookie);
+        return res.sendStatus(403);
+    }
+    //verifyToken();
+    //next();
+}

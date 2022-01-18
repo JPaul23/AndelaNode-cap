@@ -1,14 +1,13 @@
 /* Users models MongoDB */
 import mongoose from "mongoose";
-import { v4 as uuidv4 } from "uuid";
+//import { v4 as uuidv4 } from "uuid";
 
 const Schema = mongoose.Schema;
 
 var User = new Schema({
-    id: uuidv4(),
     firstname: {
         type: String,
-        default: ''
+        required: true
     },
     lastname: {
         type: String,
@@ -16,11 +15,11 @@ var User = new Schema({
     },
     email: {
         type: String,
-        required
+        required: true
     },
     password: {
         type: String,
-        required
+        required: true
     },
     admin: {
         type: Boolean,
@@ -29,4 +28,4 @@ var User = new Schema({
 });
 
 const userModel = mongoose.model('User', User);
-module.exports = userModel;
+export default userModel;

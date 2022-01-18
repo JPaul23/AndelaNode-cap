@@ -1,19 +1,20 @@
 import express from "express";
-import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
+
 import config from './config.js';
-import { verifyToken } from './controllers/authentication.js';
+import { verifyToken } from './middleware/authentication.js';
 
 
 //connecting to mongo
-//const url = config.mongoUrl;
-/* const connection = mongoose.connect(url);
+const url = config.mongoUrl;
+const connection = mongoose.connect(url);
 connection.then((db) => {
     console.log('Connected correctly to MongoDB server! ');
 }, (err) => {
     console.log('***** Not connected to MongoDB ***** server!');
     console.log(err.message);
-}); */
+});
 
 //routes
 import indexRouter from './routes/index.js';
@@ -23,6 +24,7 @@ import articlesRouter from "./routes/articles.js";
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser())
 //app.use(bodyParser.json());
 
 
@@ -34,8 +36,8 @@ app.use('/', function (req, res, next) {
 });
 
 app.use('/', indexRouter);
-app.use('/articles', verifyToken, articlesRouter);
 app.use('/user', userRouter);
+app.use('/articles', verifyToken, articlesRouter);
 
 
 //setup the port
