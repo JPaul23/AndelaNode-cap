@@ -23,8 +23,9 @@ import articlesRouter from "./routes/articles.js";
 
 const app = express();
 
+//app.use(cookieParser())
 app.use(express.json());
-app.use(cookieParser())
+
 //app.use(bodyParser.json());
 
 

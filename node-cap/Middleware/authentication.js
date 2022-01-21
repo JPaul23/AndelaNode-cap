@@ -15,12 +15,15 @@ export const verifyToken = (req, res, next) => {
 
 }
 
-export const verifyCookie = (req, res, next) => {
-    const cookie = req.cookies.session_id;
-    if (!cookie) {
-        console.log(cookie);
+export const authorization = (req, res, next) => {
+    const token = req.cookies.jwt;
+    if (!token) {
         return res.sendStatus(403);
     }
-    //verifyToken();
-    //next();
-}
+    try {
+        const data = jwt.verify(token, config.ACCESS_TOKEN_SECRET);
+        return next();
+    } catch {
+        return res.sendStatus(403);
+    }
+};
