@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt';
 import cookieParser from "cookie-parser";
-//import cookieParser from "cookie-parser";
 
 import config from "../config.js";
 import { authorization } from "../Middleware/authentication.js";

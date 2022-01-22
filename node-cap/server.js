@@ -3,7 +3,6 @@ import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 
 import config from './config.js';
-import { verifyToken } from './middleware/authentication.js';
 
 
 //connecting to mongo
@@ -38,7 +37,7 @@ app.use('/', function (req, res, next) {
 
 app.use('/', indexRouter);
 app.use('/user', userRouter);
-app.use('/articles', verifyToken, articlesRouter);
+app.use('/articles', articlesRouter);
 
 
 //setup the port

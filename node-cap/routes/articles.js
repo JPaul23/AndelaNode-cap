@@ -1,46 +1,54 @@
 import express from "express";
 import jwt from 'jsonwebtoken';
+
 import config from "../config.js";
+import { verifyToken, verifyUser } from "../Middleware/authentication.js";
+import articleModel from "../models/articles.js";
 
 const articlesRouter = express.Router();
 articlesRouter.use(express.json());
 
-
-
-const articles = [
-    {
-        user: 'paul@gmail.com',
-        title: 'post 1'
-    },
-    {
-        user: 'jean@gmail.com',
-        title: 'post 2'
-    },
-]
+const Articles = articleModel;
 
 articlesRouter.route('/')
     .all((req, res, next) => {
-        res.statusCode = 200;
         res.setHeader('Content-Type', 'text/plain');
         next()
     })
     .get((req, res, next) => {
-        res.json(articles.filter(article => article.user === req.user.email))
+        /* res.json(articles.filter(article => article.user === req.user.email)) */
+        Articles.find({})
+            .then((articles) => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(articles);
+            }, (err) => next(err))
+            .catch((err) => next(err));
     })
-    .post((req, res, next) => { //authenticate first
-        //if the user passes the authentication
-        /* const username = req.body.username;
-        const user = { name: username }
-
-
-        const accessToken = jwt.sign(user, config.ACCESS_TOKEN_SECRET);
-
-        res.json({ accessToken: accessToken }); */
+    .post(verifyUser, (req, res, next) => {
+        Articles.create(req.body)
+            .then((article) => {
+                console.log('article Created ', article);
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(article)
+            }, (err) => next(err))
+            .catch((err) => next(err));
     })
 
-    .delete((req, res, next) => {
-        res.statusCode = 401;
-        res.end('You can not perform the Delete operation');
+    .put(verifyUser, (req, res, next) => {
+        res.statusCode = 403; //not supported
+        res.end('PUT operation not supported on /articles');
+    })
+
+    .delete(verifyUser, (req, res, next) => {
+        Articles.remove({})
+            .then((response) => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(response)
+            }, (err) => next(err))
+            .catch((err) => next(err));
     });
 
 export default articlesRouter;
