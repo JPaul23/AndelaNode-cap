@@ -11,6 +11,9 @@ export const getLogout = (req, res, next) => {
     }
 }
 
+export const getUser = (req, res, next) => {
+
+}
 /* export const findUser = (req, res, next) => {
     const user = await Users.find({ 'email': `${req.body.email}` });
     Users.findOne({ 'email': `${req.body.email}` }, 'email password', function (err, user) {

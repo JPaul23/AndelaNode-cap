@@ -2,28 +2,22 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-var Article = new Schema({
-    title: {
-        type: String,
-        required: true
-    },
+var Comment = new Schema({
     author: {
         type: String,
         required: true
-
     },
-    image: {
+    comment: {
         type: String,
         required: true
     },
-    detail: {
+    articleId: {
         type: String,
         required: true
     }
-
 }, {
     timestamps: true
 });
 
-const articleModel = mongoose.model('Article', Article);
-export default articleModel;
+const commentModel = mongoose.model('Comment', Comment);
+export default commentModel;
