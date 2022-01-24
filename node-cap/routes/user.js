@@ -1,12 +1,8 @@
 import express from "express";
-
-import bcrypt from 'bcrypt';
 import cookieParser from "cookie-parser";
 
-import config from "../config.js";
 import { authorization } from "../Middleware/authentication.js";
 import { getUser, findUser, userSignup, userLogin, userLogout } from "../controllers/userController.js";
-import userModel from "../models/user.js"; //user model
 
 const userRouter = express.Router();
 userRouter.use(express.json());
