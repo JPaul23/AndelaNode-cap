@@ -6,7 +6,7 @@ import config from '../config.js';
 const Users = userModel;
 
 export const userLogout = (req, res) => {
-    return res.status(200).clearCookie('jwt').json({ message: "Successfully logged out 😏 🍀" });
+    return res.status(200).clearCookie('jwt').json({ message: "Successfully logged out 🍀" });
 }
 
 export const getUser = (req, res, next) => {
@@ -36,25 +36,26 @@ export const userSignup = async (req, res, next) => {
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
             res.json(user)
-        }, (err) => next(err))
-            .catch((err) => next(err));
+        }, (err) => res.status(400).json({ error: 'Could not perform your operation' }))
+            .catch((err) => res.status(400).json({ error: 'There is an Error' }));
 
 
     } catch (error) {
         res.statusCode = 500;
-        res.send('Looks like it\'s our problem, we\'ll solve it in no time');
+        res.json({ error: 'Looks like it\'s our problem, we\'ll solve it in no time' });
 
     }
 
 }
 export const findUser = (req, res, next) => {
     Users.findOne({ 'email': `${req.body.email}` }, 'email password', function (err, user) {
-        if (err) return handleError(err);
-        res.status(401);
-        console.log(' The user with this email %s exist, try creating your email', user.email);
+        if (err) return res.status(400).json({ error: 'There is an Error' });
+        res.status(400).json({ error: 'User already exists' });
     });/* 
     next() */
 }
+
+//TODO: verifying user???
 
 export const userLogin = async (req, res, next) => {
     //authenticate user
@@ -64,8 +65,8 @@ export const userLogin = async (req, res, next) => {
             return res.status(400).send("Cannot find user with that Email")
         }
 
-        console.log('%s is a %s.', user.email,
-            user.password);
+        /*  console.log('%s is a %s.', user.email,
+             user.password); */
         //comparing the saved password with provided one
 
         try {
@@ -84,12 +85,12 @@ export const userLogin = async (req, res, next) => {
                 res.json({ success: true, token: accessToken, status: 'You are successfully logged in!' });
             }
             else {
-                res.send('Not allowed');
+                res.status(400).json({ error: 'Not allowed' });
             }
         }
         catch (error) {
             res.statusCode = 500;
-            res.send('Looks like it\'s our problem, we\'ll solve it in no time');
+            res.json({ error: 'Looks like it\'s our problem, we\'ll solve it in no time' });
         }
     })
 
