@@ -35,9 +35,9 @@ app.use('/', function (req, res, next) {
     next();
 });
 
-app.use('/', indexRouter);
-app.use('/user', userRouter);
-app.use('/articles', articlesRouter);
+app.use('/api/v1/', indexRouter);
+app.use('/api/v1/user', userRouter);
+app.use('/api/v1/articles', articlesRouter);
 
 
 //setup the port
