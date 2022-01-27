@@ -16,6 +16,7 @@ export const getUser = (req, res, next) => {
         res.json(users);
     }, (err) => next(err))
         .catch((err) => next(err));
+
 }
 
 export const userSignup = async (req, res, next) => {
@@ -40,18 +41,22 @@ export const userSignup = async (req, res, next) => {
             .catch((err) => res.status(400).json({ error: 'There is an Error' }));
 
 
+
     } catch (error) {
         res.statusCode = 500;
         res.json({ error: 'Looks like it\'s our problem, we\'ll solve it in no time' });
 
     }
 
+
 }
 export const findUser = (req, res, next) => {
     Users.findOne({ 'email': `${req.body.email}` }, 'email password', function (err, user) {
         if (err) return res.status(400).json({ error: 'There is an Error' });
         res.status(400).json({ error: 'User already exists' });
-    });/* 
+    });
+
+    /* 
     next() */
 }
 
